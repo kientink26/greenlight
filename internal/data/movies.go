@@ -55,6 +55,8 @@ func (m MovieModel) GetAll(title string, genres []string, filter Filter) ([]*Mov
 	if err != nil {
 		return nil, Metadata{}, err
 	}
+	defer rows.Close()
+
 	var totalRecords int
 	movies := make([]*Movie, 0)
 	for rows.Next() {
