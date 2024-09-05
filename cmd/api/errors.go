@@ -61,3 +61,8 @@ func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.R
 	msg := "account must be active"
 	app.errorResponse(w, r, http.StatusForbidden, msg)
 }
+
+func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Request) {
+	msg := "doesn't have the necessary permissions"
+	app.errorResponse(w, r, http.StatusForbidden, msg)
+}

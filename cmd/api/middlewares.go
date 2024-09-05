@@ -53,6 +53,23 @@ func (app *application) requireActivatedUser(next http.HandlerFunc) http.Handler
 	return app.requireAuthentication(fn)
 }
 
+func (app *application) requirePermission(code string, next http.HandlerFunc) http.HandlerFunc {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		user := app.contextGetUser(r)
+		permissions, err := app.models.Permissions.GetAllForUser(user.ID)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+		if !validator.Has(permissions, code) {
+			app.notPermittedResponse(w, r)
+			return
+		}
+		next(w, r)
+	}
+	return app.requireActivatedUser(fn)
+}
+
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Authorization")
